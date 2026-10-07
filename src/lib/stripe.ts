@@ -47,7 +47,7 @@ export async function createCustomer(email: string, name?: string) {
   })
 }
 
-export async function constructWebhookEvent(
+export function constructWebhookEvent(
   payload: string | Buffer,
   signature: string
 ) {

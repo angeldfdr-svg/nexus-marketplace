@@ -150,7 +150,10 @@ function CheckoutForm() {
       }
 
       if (data.clientSecret && paymentMethod === 'card') {
-        const { error } = await stripe!.confirmPayment({
+        if (!stripe || !elements) {
+          throw new Error('Sistema de pagamento não está pronto. Por favor tente novamente.')
+        }
+        const { error } = await stripe.confirmPayment({
           elements,
           confirmParams: {
             return_url: `${window.location.origin}/checkout/success?order_id=${data.orderId}`,
@@ -432,10 +435,6 @@ function CheckoutForm() {
               <PaymentElement
                 options={{
                   layout: 'tabs',
-                  appearance: {
-                    theme: 'stripe',
-                    variables: { colorPrimary: '#6366f1' },
-                  },
                 }}
               />
             </div>
@@ -550,7 +549,7 @@ function CheckoutForm() {
               <Checkbox
                 checked={formData.terms}
                 onCheckedChange={(checked) => setFormData({ ...formData, terms: checked === true })}
-                error={errors.terms}
+                error={!!errors.terms}
               />
               <span className="text-sm text-muted-foreground">
                 Aceito os <Link href="/terms" className="text-primary hover:underline">Termos e Condições</Link> e a 

@@ -5,6 +5,8 @@ import { generateOrderNumber } from '@/lib/utils'
 import prisma from '@/lib/prisma'
 import { stripe } from '@/lib/stripe'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
@@ -27,7 +29,11 @@ export async function POST(request: NextRequest) {
     const productIds = items.map((i: any) => i.productId)
     const products = await prisma.product.findMany({
       where: { id: { in: productIds } },
-      include: { inventory: true, variants: { include: { inventory: true } } },
+      include: {
+        images: { take: 1, orderBy: { position: 'asc' } },
+        inventory: true,
+        variants: { include: { inventory: true } },
+      },
     })
 
     let subtotal = 0

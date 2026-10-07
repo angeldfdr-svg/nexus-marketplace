@@ -6,8 +6,9 @@ import Link from 'next/link'
 import { CheckCircle2, Truck, Mail, ArrowRight, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Suspense } from 'react'
 
-export default function CheckoutSuccessPage() {
+function CheckoutSuccessContent() {
   const searchParams = useSearchParams()
   const orderId = searchParams.get('order_id')
   const [loading, setLoading] = React.useState(true)
@@ -113,5 +114,13 @@ export default function CheckoutSuccessPage() {
         </ol>
       </div>
     </div>
+  )
+}
+
+export default function CheckoutSuccessPage() {
+  return (
+    <Suspense fallback={<div className="container-custom py-16 text-center"><Loader2 className="h-10 w-10 animate-spin mx-auto text-primary mb-4" /><p className="text-muted-foreground">A carregar...</p></div>}>
+      <CheckoutSuccessContent />
+    </Suspense>
   )
 }

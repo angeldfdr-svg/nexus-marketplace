@@ -3,6 +3,8 @@ import prisma from '@/lib/prisma'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
@@ -66,13 +68,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Stock insuficiente' }, { status: 400 })
     }
 
-    const existingItem = await prisma.cartItem.findUnique({
+    const existingItem = await prisma.cartItem.findFirst({
       where: {
-        userId_productId_variantId: {
-          userId: session.user.id,
-          productId,
-          variantId: variantId || null,
-        },
+        userId: session.user.id,
+        productId,
+        variantId: variantId || null,
       },
     })
 
@@ -123,13 +123,11 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Product ID obrigatório' }, { status: 400 })
     }
 
-    await prisma.cartItem.delete({
+    await prisma.cartItem.deleteMany({
       where: {
-        userId_productId_variantId: {
-          userId: session.user.id,
-          productId,
-          variantId: variantId || null,
-        },
+        userId: session.user.id,
+        productId,
+        variantId: variantId || null,
       },
     })
 
@@ -172,14 +170,20 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Stock insuficiente' }, { status: 400 })
     }
 
-    const cartItem = await prisma.cartItem.update({
+    const existingItem = await prisma.cartItem.findFirst({
       where: {
-        userId_productId_variantId: {
-          userId: session.user.id,
-          productId,
-          variantId: variantId || null,
-        },
+        userId: session.user.id,
+        productId,
+        variantId: variantId || null,
       },
+    })
+
+    if (!existingItem) {
+      return NextResponse.json({ error: 'Item não encontrado no carrinho' }, { status: 404 })
+    }
+
+    const cartItem = await prisma.cartItem.update({
+      where: { id: existingItem.id },
       data: { quantity },
       include: {
         product: { include: { images: { take: 1 }, inventory: true } },

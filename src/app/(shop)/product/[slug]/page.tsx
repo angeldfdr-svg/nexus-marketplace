@@ -20,6 +20,9 @@ async function getProduct(slug: string) {
         orderBy: { createdAt: 'desc' },
         take: 10,
       },
+      _count: {
+        select: { reviews: true },
+      },
     },
   })
 }
@@ -58,7 +61,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: product.name,
       description: product.shortDesc || product.description.slice(0, 160),
       images: product.images[0]?.url ? [product.images[0].url] : [],
-      type: 'product',
+      type: 'website',
     },
     other: {
       'product:price:amount': product.price.toString(),
@@ -92,6 +95,7 @@ export default async function ProductPage({ params }: PageProps) {
     inventory: product.inventory,
     reviews: product.reviews,
     category: product.category,
+    _count: product._count,
     relatedProducts: relatedProducts.map((p) => ({
       ...p,
       price: Number(p.price),

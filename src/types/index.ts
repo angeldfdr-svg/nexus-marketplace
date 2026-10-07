@@ -56,7 +56,7 @@ export interface CartItemWithProduct extends CartItem {
 
 export interface OrderWithItems extends Order {
   items: (OrderItem & {
-    product: Pick<Product, 'id' | 'name' | 'slug' | 'images'>
+    product: Pick<Product, 'id' | 'name' | 'slug'> & { images: ProductImage[] }
     variant: Pick<ProductVariant, 'id' | 'name' | 'value'> | null
   })[]
 }
@@ -170,6 +170,7 @@ export interface SiteConfig {
     instagram: string
     linkedin: string
     youtube: string
+    facebook: string
   }
 }
 
@@ -184,6 +185,7 @@ export const siteConfig: SiteConfig = {
     instagram: 'https://instagram.com/nexustech',
     linkedin: 'https://linkedin.com/company/nexus',
     youtube: 'https://youtube.com/@nexustech',
+    facebook: 'https://facebook.com/nexustech',
   },
 }
 

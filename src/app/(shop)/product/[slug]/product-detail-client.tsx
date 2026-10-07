@@ -15,8 +15,12 @@ import { useCart } from '@/hooks/use-cart'
 import type { ProductWithRelations } from '@/types'
 
 interface ProductDetailClientProps {
-  product: ProductWithRelations & {
-    relatedProducts: (ProductWithRelations & { category?: never })[]
+  product: Omit<ProductWithRelations, 'price' | 'compareAtPrice' | 'costPrice' | 'weight'> & {
+    price: number
+    compareAtPrice: number | null
+    costPrice: number | null
+    weight: number | null
+    relatedProducts: any[]
   }
 }
 
@@ -44,12 +48,10 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
       id: `temp-${Date.now()}`,
       userId: '',
       productId: product.id,
-      variantId: selectedVariant || undefined,
+      variantId: selectedVariant || null,
       quantity,
       product: product as any,
-      variant: selectedVariant ? product.variants.find((v) => v.id === selectedVariant) : null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      variant: selectedVariant ? (product.variants.find((v) => v.id === selectedVariant) || null) : null,
     })
     openCart()
     router.refresh()
@@ -176,7 +178,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
                         {group.values.map((value) => {
                           const variant = product.variants.find((v) => v.name === group.name && v.value === value)
                           const isSelected = selectedVariant === variant?.id
-                          const isOutOfStock = variant?.inventory && variant.inventory.quantity - variant.inventory.reserved <= 0
+                          const isOutOfStock = Boolean(variant?.inventory && variant.inventory.quantity - variant.inventory.reserved <= 0)
                           return (
                             <button
                               key={variant?.id}
@@ -344,7 +346,11 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
                             <span className="font-medium">{review.user.name || 'Utilizador'}</span>
-                            {review.verified && <Check className="h-4 w-4 text-green-500" title="Compra verificada" />}
+                            {review.verified && (
+                              <span title="Compra verificada">
+                                <Check className="h-4 w-4 text-green-500" />
+                              </span>
+                            )}
                             <div className="flex gap-0.5">
                               {[...Array(5)].map((_, i) => (
                                 <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -408,7 +414,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
   )
 }
 
-function RelatedProductCard({ product }: { product: ProductWithRelations }) {
+function RelatedProductCard({ product }: { product: any }) {
   const discount = product.compareAtPrice 
     ? Math.round((1 - Number(product.price) / Number(product.compareAtPrice)) * 100)
     : null

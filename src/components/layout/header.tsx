@@ -103,6 +103,7 @@ export function Header() {
 }
 
 function NavItem({ item }: { item: typeof NAVIGATION[0] }) {
+  const pathname = usePathname()
   if (item.megaMenu) {
     return <MegaMenuItem item={item} />
   }
@@ -123,6 +124,7 @@ function NavItem({ item }: { item: typeof NAVIGATION[0] }) {
 }
 
 function DropdownNavItem({ item }: { item: typeof NAVIGATION[0] }) {
+  const pathname = usePathname()
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -149,6 +151,7 @@ function DropdownNavItem({ item }: { item: typeof NAVIGATION[0] }) {
 }
 
 function MegaMenuItem({ item }: { item: typeof NAVIGATION[0] }) {
+  const pathname = usePathname()
   const [open, setOpen] = React.useState(false)
 
   return (

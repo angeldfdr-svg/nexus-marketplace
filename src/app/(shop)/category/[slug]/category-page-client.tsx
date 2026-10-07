@@ -14,10 +14,12 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import type { CategoryWithChildren } from '@/types'
+import type { Category } from '@prisma/client'
 
 interface CategoryPageClientProps {
-  category: CategoryWithChildren & {
+  category: Category & {
+    children?: any[]
+    parent?: { id: string; name: string; slug: string } | null
     products: any[]
     subcategories: any[]
     filters: { priceRange: { min: number; max: number }; tags: string[] }
