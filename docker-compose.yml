@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nexus-postgres
+    environment:
+      POSTGRES_USER: nexus
+      POSTGRES_PASSWORD: nexus_password
+      POSTGRES_DB: nexus_marketplace
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexus -d nexus_marketplace"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nexus-app
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://nexus:nexus_password@postgres:5432/nexus_marketplace?schema=public
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: your-super-secret-key-min-32-chars-generate-with-openssl-rand-base64-32
+      STRIPE_SECRET_KEY: sk_test_your-stripe-secret-key
+      STRIPE_PUBLISHABLE_KEY: pk_test_your-stripe-publishable-key
+      STRIPE_WEBHOOK_SECRET: whsec_your-webhook-secret
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_your-stripe-publishable-key
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+
+  # Optional: Prisma Studio
+  prisma-studio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nexus-prisma-studio
+    command: npx prisma studio --port 5555 --hostname 0.0.0.0
+    ports:
+      - "5555:5555"
+    environment:
+      DATABASE_URL: postgresql://nexus:nexus_password@postgres:5432/nexus_marketplace?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - studio
+
+volumes:
+  postgres_data:
