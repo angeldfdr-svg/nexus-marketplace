@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     default: 'NEXUS — Premium Technology Marketplace',
     template: '%s | NEXUS',
   },
-  description: 'Descubra tecnologia premium curada. Drones, áudio, smart home, fotografia e muito mais. Envio grátis > 100€, devoluções 30 dias, garantia oficial.',
+  description: 'Descubra tecnologia premium curada. Drones, áudio, smart home, fotografia e muito mais. Envio grátis &gt; 100€, devoluções 30 dias, garantia oficial.',
   keywords: ['technology', 'electronics', 'drones', 'audio', 'smart home', 'photography', 'premium', 'marketplace'],
   authors: [{ name: 'NEXUS' }],
   creator: 'NEXUS',

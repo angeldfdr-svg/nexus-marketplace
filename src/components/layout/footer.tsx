@@ -41,7 +41,7 @@ const FOOTER_LINKS = {
 }
 
 const FEATURES = [
-  { icon: Truck, label: 'Envio Grátis', description: 'Encomendas > 100€' },
+  { icon: Truck, label: 'Envio Grátis', description: 'Encomendas &gt; 100€' },
   { icon: RotateCcw, label: 'Devoluções 30 dias', description: 'Sem complicações' },
   { icon: Shield, label: 'Pagamento Seguro', description: 'Certificado SSL' },
   { icon: Headphones, label: 'Suporte Especializado', description: 'Seg-Sex 9h-19h' },
